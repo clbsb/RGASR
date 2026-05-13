@@ -1,0 +1,90 @@
+name: FirstIDEA0302_x2
+model_type: SRModel
+scale: 2
+num_gpu: 1
+manual_seed: 0
+
+datasets:
+  test_1:
+    name: Set5
+    type: PairedImageDataset
+    dataroot_gt: datasets2/benchmark/Set5/Set5/HR
+    dataroot_lq: datasets2/benchmark/Set5/Set5/LR_bicubic/X2
+    filename_tmpl: '{}x2'
+    io_backend:
+      type: disk
+
+
+  test_2:
+    name: Set14
+    type: PairedImageDataset
+    dataroot_gt: datasets2/benchmark/Set14/Set14/HR
+    dataroot_lq: datasets2/benchmark/Set14/Set14/LR_bicubic/X2
+    filename_tmpl: '{}x2'
+    io_backend:
+      type: disk
+
+  test_3:
+    name: B100
+    type: PairedImageDataset
+    dataroot_gt: datasets2/benchmark/B100/HR
+    dataroot_lq: datasets2/benchmark/B100/LR_bicubic/X2
+    filename_tmpl: '{}x2'
+    io_backend:
+      type: disk
+
+  test_4:
+    name: Urban100
+    type: PairedImageDataset
+    dataroot_gt: datasets2/benchmark/Urban100/HR
+    dataroot_lq: datasets2/benchmark/Urban100/LR_bicubic/X2
+    filename_tmpl: '{}x2'
+    io_backend:
+      type: disk
+
+  test_5:  # the 5th test dataset
+    name: Manga109
+    type: PairedImageDataset
+    dataroot_gt: datasets2/benchmark/Manga109/Manga109/HR
+    dataroot_lq: datasets2/benchmark/Manga109/Manga109/LR_bicubic/X2
+    filename_tmpl: '{}x2'
+    io_backend:
+      type: disk
+
+
+
+# network structures
+network_g:
+  type: FirstIDEA0302_CA
+  in_chans: 3
+  embed_dim: 60
+  num_basicblock: 4
+  num_layer: 6
+  num_heads: 5
+  window_size: 16
+  mlp_ratio: 1.
+  upscale: 2
+  img_range: 1.
+  resi_connection: '1conv'
+  convffn_kernel_size: 7
+
+# path
+path:
+  pretrain_network_g: experiments/pretrained_models/FirstIDEA0302_x2.pth
+  strict_load_g: yes
+  param_key_g: params_ema
+
+# validation settings
+val:
+  save_img: true
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 2
+      test_y_channel: yes
+    ssim:
+      type: calculate_ssim
+      crop_border: 2
+      test_y_channel: yes
